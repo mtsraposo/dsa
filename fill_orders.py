@@ -17,12 +17,6 @@ def filledOrders(order, k):
             else:
                 return filledOrders(left, k)
 
-# order = open('./sample_input.txt', 'r').read().split('\n')
-# order = [int(i) for i in order]
-#
-# count = order.pop(0)
-# k = order.pop(-1)
-
 order = [random.randrange(1, 10**9, 1) for i in range(2*10**5)]
 k = random.randint(1, 10**9)
 print(filledOrders(order, k))
