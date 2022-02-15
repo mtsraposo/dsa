@@ -8,14 +8,26 @@ def print_running_time(command):
     print(end - start)
 
 
-def insertion_sort(arr):
+def insertion_sort(arr, ascending=True):
     for j in range(1, len(arr)):
         key = arr[j]
         i = j - 1
-        while i >= 0 and arr[i] > key:
+        while i >= 0 and (arr[i] > key) is ascending:
             arr[i + 1] = arr[i]
             i -= 1
         arr[i + 1] = key
+    return arr
+
+
+def selection_sort(arr):
+    for j in range(len(arr) - 1):
+        min_e = arr[j]
+        min_i = j
+        for i in range(j + 1, len(arr)):
+            if arr[i] < min_e:
+                min_e = arr[i]
+                min_i = i
+        arr[j], arr[min_i] = min_e, arr[j]
     return arr
 
 
@@ -24,3 +36,9 @@ if __name__ == '__main__':
     # It uses the Timsort algorithm, a mixture between merge sort and insertion sort.
     print_running_time(command="insertion_sort(arr=[5, 2, 4, 6, 1, 3])")  # 4.70e-05
     print_running_time(command="sorted([5, 2, 4, 6, 1, 3])")  # 3.20e-05
+
+    # Descending order
+    insertion_sort(arr=[5, 2, 4, 6, 1, 3],
+                   ascending=False)
+
+    selection_sort(arr=[5, 2, 4, 6, 1, 3])
