@@ -1,6 +1,8 @@
-import time
-import numpy as np
 from random import randint
+
+import time
+
+from copy import deepcopy
 
 
 def print_running_time(command):
@@ -34,16 +36,21 @@ def selection_sort(arr):
 
 
 def merge(arr, p, q, r):
-    left = arr[p:q] + [np.inf]
-    right = arr[q:r] + [np.inf]
+    left = arr[p:q]
+    right = arr[q:r]
     i, j = 0, 0
     for k in range(p, r):
-        if left[i] <= right[j]:
-            arr[k] = left[i]
-            i += 1
+        if j == len(right):
+            arr[k:k + len(left) - i - 1] = left[i + 1:len(left)]
+        elif i == len(left):
+            arr[k:k + len(right) - j - 1] = right[j + 1:len(right)]
         else:
-            arr[k] = right[j]
-            j += 1
+            if left[i] <= right[j]:
+                arr[k] = left[i]
+                i += 1
+            else:
+                arr[k] = right[j]
+                j += 1
 
 
 def merge_sort(arr, p=0, r=None):
@@ -54,20 +61,23 @@ def merge_sort(arr, p=0, r=None):
         merge_sort(arr, p, q)
         merge_sort(arr, q, r)
         merge(arr, p, q, r)
+
+
+def check_sorted(arr):
     # Return True if array is sorted
     return all([arr[i] <= arr[i + 1] for i in range(len(arr) - 1)])
 
 
 if __name__ == '__main__':
     input_array = [randint(0, 10 ** 4) for i in range(10 ** 4)]
-    arr = input_array.copy()
+    arr = deepcopy(input_array)
 
-    # The built-in sorted method is significantly faster than the insertion sort.
+    # The built-in sorted method is significantly faster than merge-sort, insertion and selection sort algorithms.
     # It uses the Timsort algorithm, a mixture between merge sort and insertion sort.
-    print_running_time(command="sorted(arr)")  # 0.00011897087097167969
-    print_running_time(command="insertion_sort(arr)")  # 0.002483844757080078
-    print_running_time(command="selection_sort(arr)")  # 1.6274049282073975
-    print_running_time(command="merge_sort(arr)")  # 12.438302993774414
+    print_running_time(command="sorted(deepcopy(input_array))")  # 0.00821375846862793
+    print_running_time(command="merge_sort(arr=deepcopy(input_array))")  # 0.45260000228881836
+    print_running_time(command="selection_sort(arr=deepcopy(input_array))")  # 1.6123661994934082
+    print_running_time(command="insertion_sort(arr=deepcopy(input_array))")  # 2.6405270099639893
 
     # Descending order
     insertion_sort(arr=[5, 2, 4, 6, 1, 3],
