@@ -25,10 +25,10 @@ time_frames = {'1 second': second,
 
 # Complexity functions
 # Adding 10e-12 to log to avoid evaluating on zero
-complexities = {'lg n': lambda n: np.log(n + 10 ** -12),
+complexities = {'lg n': lambda n: np.log2(n + 10 ** -12),
                 'sqrt(n)': lambda n: np.sqrt(n),
                 'n': lambda n: n,
-                'n lg n': lambda n: n * np.log(n + 10 ** -12),
+                'n lg n': lambda n: n * np.log2(n + 10 ** -12),
                 'n**2': lambda n: n ** 2,
                 'n**3': lambda n: n ** 3,
                 '2**n': lambda n: 2 ** n,
