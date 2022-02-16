@@ -1,4 +1,6 @@
 import time
+import numpy as np
+from random import randint
 
 
 def print_running_time(command):
@@ -31,14 +33,42 @@ def selection_sort(arr):
     return arr
 
 
+def merge(arr, p, q, r):
+    left = arr[p:q] + [np.inf]
+    right = arr[q:r] + [np.inf]
+    i, j = 0, 0
+    for k in range(p, r):
+        if left[i] <= right[j]:
+            arr[k] = left[i]
+            i += 1
+        else:
+            arr[k] = right[j]
+            j += 1
+
+
+def merge_sort(arr, p=0, r=None):
+    if r is None:
+        r = len(arr)
+    if r > p + 1:
+        q = (p + r) // 2
+        merge_sort(arr, p, q)
+        merge_sort(arr, q, r)
+        merge(arr, p, q, r)
+    # Return True if array is sorted
+    return all([arr[i] <= arr[i + 1] for i in range(len(arr) - 1)])
+
+
 if __name__ == '__main__':
+    input_array = [randint(0, 10 ** 4) for i in range(10 ** 4)]
+    arr = input_array.copy()
+
     # The built-in sorted method is significantly faster than the insertion sort.
     # It uses the Timsort algorithm, a mixture between merge sort and insertion sort.
-    print_running_time(command="insertion_sort(arr=[5, 2, 4, 6, 1, 3])")  # 4.70e-05
-    print_running_time(command="sorted([5, 2, 4, 6, 1, 3])")  # 3.20e-05
+    print_running_time(command="sorted(arr)")  # 0.00011897087097167969
+    print_running_time(command="insertion_sort(arr)")  # 0.002483844757080078
+    print_running_time(command="selection_sort(arr)")  # 1.6274049282073975
+    print_running_time(command="merge_sort(arr)")  # 12.438302993774414
 
     # Descending order
     insertion_sort(arr=[5, 2, 4, 6, 1, 3],
                    ascending=False)
-
-    selection_sort(arr=[5, 2, 4, 6, 1, 3])
