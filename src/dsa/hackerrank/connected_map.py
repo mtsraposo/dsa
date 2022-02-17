@@ -1,13 +1,8 @@
 class ConnectedNode:
-    def __init__(self, value, coords):
-        self.connections = [coords]
+    def __init__(self, value, cluster_id):
         self.value = value
-        self.coords = coords
         self.visited = False
-        self.cluster_size = value
-
-    def add_connection(self, connection_coords):
-        self.connections += [connection_coords]
+        self.cluster_id = cluster_id
 
 
 def gen_neighborhood_bounds(i, j, rows, cols):
@@ -17,70 +12,47 @@ def gen_neighborhood_bounds(i, j, rows, cols):
                     'end': min(cols - 1, j + 1) + 1}}
 
 
-def update_neighbors(matrix, bounds, i, j):
-    if matrix[i][j].value == 1:
-        for r in range(bounds['row']['start'], bounds['row']['end']):
-            for c in range(bounds['col']['start'], bounds['col']['end']):
-                if not isinstance(matrix[r][c], ConnectedNode):
-                    matrix[r][c] = ConnectedNode(matrix[r][c], (r, c))
-                else:
-                    if matrix[r][c].value == 1 and (matrix[r][c].coords not in matrix[i][j].connections):
-                        matrix[i][j].add_connection(matrix[r][c].coords)
-                        matrix[r][c].add_connection(matrix[i][j].coords)
-    return matrix
+def search_cluster(matrix, i, j, rows, cols, clusters):
+    bounds = gen_neighborhood_bounds(i, j, rows, cols)
+    for r in range(bounds['row']['start'], bounds['row']['end']):
+        for c in range(bounds['col']['start'], bounds['col']['end']):
+            if not isinstance(matrix[r][c], ConnectedNode):
+                matrix[r][c] = ConnectedNode(matrix[r][c], None)
+            if not matrix[r][c].visited and matrix[r][c].value == 1:
+                matrix[r][c].cluster_id = matrix[i][j].cluster_id
+                matrix[r][c].visited = True
+                clusters[matrix[i][j].cluster_id] += 1
+                search_cluster(matrix, r, c, rows, cols, clusters)
 
 
-def find_max_connected_cluster(linked_matrix, rows, cols):
-    max_connections = 0
-    for i in range(rows):
-        for j in range(cols):
-            linked_matrix[i][j].visited = True
-            if linked_matrix[i][j].value == 1:
-                if len(linked_matrix[i][j].connections) == 2:
-                    (r, c) = linked_matrix[i][j].connections[1]
-                    if linked_matrix[r][c].cluster_size > 1:
-                        if linked_matrix[i][j].cluster_size == 1:
-                            linked_matrix[i][j].cluster_size += linked_matrix[r][c].cluster_size
-                            linked_matrix[r][c].cluster_size = linked_matrix[i][j].cluster_size
-                        else:
-                            linked_matrix[i][j].cluster_size = max(linked_matrix[r][c].cluster_size,
-                                                                   linked_matrix[i][j].cluster_size)
-                            linked_matrix[r][c].cluster_size = linked_matrix[i][j].cluster_size
-                else:
-                    for (r, c) in linked_matrix[i][j].connections:
-                        visited = linked_matrix[r][c].visited
-                        equals_one = linked_matrix[r][c].value == 1
-                        if not visited and equals_one:
-                            linked_matrix[i][j].cluster_size += 1
-                    for (r, c) in linked_matrix[i][j].connections:
-                        if linked_matrix[r][c].cluster_size >= 1:
-                            linked_matrix[r][c].cluster_size = linked_matrix[i][j].cluster_size
-                            linked_matrix[r][c].visited = True
-            if linked_matrix[i][j].cluster_size > max_connections:
-                max_connections = linked_matrix[i][j].cluster_size
-            print(f'-----({i}, {j})-----')
-            for m in range(rows):
-                print([linked_matrix[m][n].cluster_size for n in range(cols)])
-    return max_connections
+def print_matrix(matrix):
+    rows = len(matrix)
+    cols = len(matrix[0])
+    for m in range(rows):
+        print([matrix[m][n].cluster_id for n in range(cols)])
 
 
 def connected_cell(matrix):
     rows = len(matrix)
     cols = len(matrix[0])
+    cluster_id = 0
+    clusters = dict()
     for i in range(rows):
         for j in range(cols):
             if not isinstance(matrix[i][j], ConnectedNode):
-                matrix[i][j] = ConnectedNode(matrix[i][j], (i, j))
-            neighborhood_bounds = gen_neighborhood_bounds(i, j, rows, cols)
-            update_neighbors(matrix, neighborhood_bounds, i, j)
-    return matrix
+                matrix[i][j] = ConnectedNode(matrix[i][j], None)
+            if not matrix[i][j].visited and matrix[i][j].value == 1:
+                matrix[i][j].cluster_id = cluster_id
+                matrix[i][j].visited = True
+                clusters[cluster_id] = 1
+                search_cluster(matrix, i, j, rows, cols, clusters)
+                cluster_id += 1
+    print_matrix(matrix)
+    return max(clusters.values())
 
 
-linked_matrix = connected_cell(matrix=[[0, 1, 1, 1, 1],
+max_cluster = connected_cell(matrix=[[0, 1, 1, 1, 1],
                                        [1, 0, 0, 0, 1],
                                        [1, 1, 0, 1, 0],
                                        [0, 1, 0, 1, 1],
                                        [0, 1, 1, 1, 0]])
-rows = len(linked_matrix)
-cols = len(linked_matrix[0])
-tmp = find_max_connected_cluster(linked_matrix, rows, cols)
