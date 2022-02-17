@@ -7,8 +7,8 @@ def linear_search(arr, v):
 
 def binary_search(sorted_arr, v):
     midpoint = len(sorted_arr) // 2
-    if len(sorted_arr) <= 1:
-        return midpoint
+    if len(sorted_arr) == 0:
+        return 0
     elif v == sorted_arr[midpoint]:
         return midpoint
     elif v > sorted_arr[midpoint]:
@@ -22,4 +22,4 @@ if __name__ == '__main__':
                   v=7)
 
     binary_search(sorted_arr=[1, 2, 3, 6, 9, 12, 15, 18, 21],
-                  v=17)
+                  v=19)
