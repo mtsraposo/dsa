@@ -7,16 +7,14 @@ def linear_search(arr, v):
 
 def binary_search(sorted_arr, v):
     midpoint = len(sorted_arr) // 2
-    if v == sorted_arr[midpoint]:
+    if len(sorted_arr) <= 1:
         return midpoint
+    elif v == sorted_arr[midpoint]:
+        return midpoint
+    elif v > sorted_arr[midpoint]:
+        return midpoint + 1 + binary_search(sorted_arr[midpoint + 1:], v)
     else:
-        if len(sorted_arr) == 1:
-            return None
-        else:
-            if v > sorted_arr[midpoint]:
-                return midpoint + 1 + binary_search(sorted_arr[midpoint+1:], v)
-            else:
-                return binary_search(sorted_arr[:midpoint], v)
+        return binary_search(sorted_arr[:midpoint], v)
 
 
 if __name__ == '__main__':
@@ -24,4 +22,4 @@ if __name__ == '__main__':
                   v=7)
 
     binary_search(sorted_arr=[1, 2, 3, 6, 9, 12, 15, 18, 21],
-                  v=18)
+                  v=17)
