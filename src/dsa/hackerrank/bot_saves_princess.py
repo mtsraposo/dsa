@@ -11,17 +11,17 @@ def find_princess(n, grid):
         return first_col.index('p'), 0
     else:
         princess = find_princess(n - 1, [r[1:] for r in grid[1:]])
-        return princess[1] + 1, princess[1] + 1
+        return princess[0] + 1, princess[1] + 1
 
 
 def next_move(n, r, c, grid):
     p = find_princess(n, grid)
-    if p[1] - c < 0:
+    if p[1] < c:
         return 'LEFT'
-    elif p[1] - c > 0:
+    elif p[1] > c:
         return 'RIGHT'
     else:
-        if p[0] - r < 0:
+        if p[0] < r:
             return 'UP'
         else:
             return 'DOWN'
