@@ -1,12 +1,13 @@
-from bisect import bisect
+from bisect import bisect, bisect_left
 from itertools import groupby
 
 
 def rank_high_scores(player, ranked):
     high_ranks = []
     if len(player):
-        index = bisect(player, ranked[-1])
-        if index <= len(player):
+        index = bisect_left(player, ranked[-1])
+        print(player, index)
+        if index < len(player):
             high_scores = player[index:]
             high_ranks = [1] * len(high_scores)
             player = player[:index]
@@ -17,16 +18,11 @@ def rank_low_scores(player, ranked, ranked_count):
     # Start with scores that are below the lowest rank
     low_ranks = []
     if len(player):
-        index = bisect(player, ranked[0])
+        index = bisect_left(player, ranked[0])
+        print(player, index)
         if index > 0:
             low_scores = player[:index]
-            if ranked[0] == low_scores[0]:  # if all player scores are equal to the lowest score
-                low_ranks = [ranked_count] * len(low_scores)
-            else:
-                last_rank = ranked_count
-                for k, g in groupby(low_scores):
-                    low_ranks += [last_rank + 1] * len(list(g))
-                    last_rank += 1
+            low_ranks += [ranked_count + 1] * len(low_scores)
             player = player[index:]
     return player, low_ranks
 
@@ -37,10 +33,12 @@ def rank_middle_scores(player, ranked):
     middle_ranks = []
     if len(player):
         index_max_player = bisect(ranked, player[-1])
-        for p in player:
-            index = bisect(ranked, p, hi=index_max_player)
-            middle_ranks += [len(ranked) - index + 1]
-            ranked = ranked[index:]
+        index_min_player = bisect(ranked, player[0])
+        print(player, index_min_player, index_max_player)
+        for p, g in groupby(player):
+            index = bisect(ranked, p, lo=index_min_player, hi=index_max_player)
+            middle_ranks += [len(ranked) - index + 1] * len(list(g))
+            index_min_player = index
     return middle_ranks
 
 
@@ -61,8 +59,7 @@ if __name__ == '__main__':
     s = """7
     100 100 50 40 40 20 10
     4
-    90 120 120 120"""
-    # s = re.sub('[\t]*|[ ][ ]+', '', s)
+    5 25 50 120"""
     s = s.split('\n')
     ranked_count = int(s[0])
     ranked = list(map(int, s[1].rstrip().split()))
