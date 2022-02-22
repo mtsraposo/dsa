@@ -24,7 +24,8 @@ def binary_search(sorted_arr, v, index=0):
     elif v == sorted_arr[midpoint]:
         return index + midpoint
     elif v > sorted_arr[midpoint]:
-        return binary_search(sorted_arr[midpoint + 1:], v, index + midpoint + 1)
+        relative_index = min(midpoint + 1, len(sorted_arr)-1)
+        return binary_search(sorted_arr[relative_index:], v, index + relative_index)
     else:
         return binary_search(sorted_arr[:midpoint], v, index)
 
