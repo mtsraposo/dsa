@@ -4,7 +4,7 @@ import time
 
 from copy import deepcopy
 
-from src.dsa.intro_algo.chapter_2 import searching
+from src.dsa.intro_algo.chapter_2.searching import binary_search_insertion
 
 
 def print_running_time(command):
@@ -28,7 +28,7 @@ def insertion_sort(arr, ascending=True):
 def insertion_sort_with_binary_search(arr):
     for j in range(1, len(arr)):
         key = arr[j]
-        insert_index = searching.binary_search(arr[:j], key)
+        insert_index = binary_search_insertion(arr[:j], key)
         arr[insert_index + 1:j + 1] = arr[insert_index:j]
         arr[insert_index] = key
     return arr
