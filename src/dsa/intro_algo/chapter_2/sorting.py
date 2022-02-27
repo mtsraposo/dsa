@@ -6,7 +6,24 @@ from copy import deepcopy
 
 from src.dsa.intro_algo.chapter_2.searching import binary_search_insertion
 
+import functools
 
+import timeit
+
+
+def timer(func):
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        start_time = time.perf_counter()
+        func(*args, **kwargs)
+        end_time = time.perf_counter()
+        run_time = end_time - start_time
+        print(f"Finished {func.__name__!r} in {run_time} secs")
+
+    return wrapper_timer
+
+
+@timer
 def print_running_time(command):
     start = time.time()
     exec(command)
@@ -14,6 +31,7 @@ def print_running_time(command):
     print(end - start)
 
 
+@timer
 def insertion_sort(arr, ascending=True):
     for j in range(1, len(arr)):
         key = arr[j]
@@ -25,6 +43,7 @@ def insertion_sort(arr, ascending=True):
     return arr
 
 
+@timer
 def insertion_sort_with_binary_search(arr):
     for j in range(1, len(arr)):
         key = arr[j]
@@ -34,6 +53,7 @@ def insertion_sort_with_binary_search(arr):
     return arr
 
 
+@timer
 def selection_sort(arr):
     for j in range(len(arr) - 1):
         min_e = arr[j]
@@ -83,15 +103,19 @@ def check_sorted(arr):
 
 if __name__ == '__main__':
     input_array = [randint(0, 10 ** 4) for i in range(10 ** 4)]
-
+    setup = """\
+from random import randint
+from __main__ import input_array, merge_sort
+"""
     # The built-in sorted method is significantly faster than merge-sort, insertion and selection sort algorithms.
     # It uses the Timsort algorithm, a mixture between merge sort and insertion sort.
     # Using binary search in the internal insertion sort loop greatly improves its performance.
-    print_running_time(command="sorted(deepcopy(input_array))")  # 0.005749940872192383
-    print_running_time(command="merge_sort(arr=deepcopy(input_array))")  # 0.035993099212646484
-    print_running_time(command="insertion_sort_with_binary_search(arr=deepcopy(input_array))")  # 0.3013739585876465
-    print_running_time(command="selection_sort(arr=deepcopy(input_array))")  # 1.6287460327148438
-    print_running_time(command="insertion_sort(arr=deepcopy(input_array))")  # 2.6522066593170166
+    timeit.timeit("sorted(input_array)", setup, number=1)  # 0.00012949999995726102
+    timeit.timeit("merge_sort(input_array)", setup, number=1)  # 0.026260874999934458
+
+    insertion_sort_with_binary_search(arr=deepcopy(input_array))  # 0.24095316700004332
+    selection_sort(arr=deepcopy(input_array))  # 1.6088862090000475
+    insertion_sort(arr=deepcopy(input_array))  # 2.608851125000001
 
     # Descending order
     insertion_sort(arr=[5, 2, 4, 6, 1, 3],
