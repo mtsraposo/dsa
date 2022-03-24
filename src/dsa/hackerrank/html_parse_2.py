@@ -4,11 +4,11 @@ from html.parser import HTMLParser
 class MyHTMLParser(HTMLParser):
     def handle_comment(self, data):
         comment_type = 'Multi' if '\n' in data else 'Single'
-        print(f"{comment_type}-line Comment", data, sep='\n')
+        print(f">>> {comment_type}-line Comment", data, sep='\n')
 
     def handle_data(self, data):
         if data != '\n':
-            print(f"{repr('>>>')} Data", data, sep='\n')
+            print(f">>> Data", data, sep='\n')
 
 
 if __name__ == '__main__':
