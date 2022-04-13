@@ -1,4 +1,4 @@
-# Data Structure and Algorithms
+# Data Structures and Algorithms
 
 Largely based on 
 <i href=https://mitpress.mit.edu/books/introduction-algorithms-third-edition>Introduction to Algorithms,
